@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintage Love Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            overflow: hidden;
+            background: #f5f5dc;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ff6b8b" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') 12 12, auto;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="paper" patternUnits="userSpaceOnUse" width="100" height="100"><image href="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f5f0e1%22/><path d=%22M10,10 Q50,5 90,10 Q95,50 90,90 Q50,95 10,90 Q5,50 10,10%22 fill=%22none%22 stroke=%22%23e8dcc9%22 stroke-width=%222%22 opacity=%220.3%22/><path d=%22M20,20 Q50,15 80,20 Q85,50 80,80 Q50,85 20,80 Q15,50 20,20%22 fill=%22none%22 stroke=%22%23d4c9b8%22 stroke-width=%221.5%22 opacity=%220.2%22/><circle cx=%2230%22 cy=%2230%22 r=%222%22 fill=%22%23e8dcc9%22 opacity=%220.1%22/><circle cx=%2270%22 cy=%2270%22 r=%223%22 fill=%22%23e8dcc9%22 opacity=%220.1%22/></svg>" x="0" y="0" width="100" height="100"/></pattern></defs><rect width="100%" height="100%" fill="url(%23paper)"/></svg>');
+            background-size: 300px;
+            overflow: hidden;
+            filter: sepia(0.3) brightness(0.95);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.05);
+        }
+
+        /* Film roll border */
+        .film-roll {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 30px,
+                #333 30px,
+                #333 32px
+            );
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+
+        /* Cat couple */
+        .cat-couple {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            height: 120px;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 100%);
+            border-radius: 0 20px 20px 0;
+            padding: 15px;
+            transform: rotate(-2deg);
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .cat-couple::before {
+            content: "🐱❤️🐱";
+            font-size: 40px;
+            display: block;
+            text-align: center;
+        }
+
+        .cat-couple::after {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px dashed #ff9a9e;
+            border-radius: 0 25px 25px 0;
+            opacity: 0.5;
+        }
+
+        /* Message paper */
+        .message-paper {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%) rotate(-3deg);
+            background: #fffaf0;
+            padding: 25px;
+            max-width: 300px;
+            border: 1px solid #e8dcc9;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            animation: slideInLeft 1s ease-out;
+            z-index: 3;
+        }
+
+        .message-paper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 95%, #ff6b8b 95%),
+                        linear-gradient(-45deg, transparent 95%, #ff6b8b 95%);
+            pointer-events: none;
+        }
+
+        .message-paper p {
+            font-size: 24px;
+            color: #8b4513;
+            font-family: 'Brush Script MT', cursive;
+            text-align: center;
+            transform: rotate(-1deg);
+        }
+
+        /* Fingerprint heart */
+        .fingerprint-heart {
+            position: absolute;
+            top: 15%;
+            right: 15%;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #ffe6e6 100%);
+            border-radius: 50%;
+            transform: rotate(10deg);
+            animation: heartbeat 2s infinite;
+            z-index: 2;
+        }
+
+        .fingerprint-heart::before {
+            content: "❤️";
+            font-size: 40px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Heart stamp */
+        .heart-stamp {
+            position: absolute;
+            top: 30%;
+            right: 12%;
+            width: 80px;
+            height: 80px;
+            background: #ff0000;
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 50% 75%, 18% 100%, 0% 38%);
+            transform: rotate(15deg);
+            opacity: 0.7;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.3));
+            animation: stampIn 1.5s ease-out;
+            z-index: 3;
+        }
+
+        /* Hello Kitty with gift */
+        .hello-kitty {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 200px;
+            cursor: pointer;
+            animation: bounce 4s infinite;
+            z-index: 10;
+            transition: transform 0.3s;
+        }
+
+        .hello-kitty:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .kitty-body {
+            position: absolute;
+            width: 120px;
+            height: 140px;
+            background: white;
+            border-radius: 50% 50% 45% 45%;
+            top: 30px;
+            left: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .kitty-ears {
+            position: absolute;
+            top: 0;
+            left: 40px;
+            width: 100px;
+            height: 60px;
+        }
+
+        .ear {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            top: -20px;
+        }
+
+        .ear-left { left: 10px; transform: rotate(-30deg); }
+        .ear-right { right: 10px; transform: rotate(30deg); }
+
+        .kitty-bow {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #ff6b8b;
+            border-radius: 50%;
+            top: 10px;
+            left: 70px;
+            transform: rotate(45deg);
+        }
+
+        .kitty-gift {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #4CAF50;
+            top: 120px;
+            left: 60px;
+            border-radius: 10px;
+            transform: rotate(5deg);
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .gift-bow {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: #ff6b8b;
+            top: 20px;
+            border-radius: 5px;
+        }
+
+        /* Kisses and hearts */
+        .kisses {
+            position: absolute;
+            font-size: 30px;
+            color: #ff6b8b;
+            animation: floatUp 5s linear infinite;
+        }
+
+        .kiss1 { top: 70%; left: 10%; animation-delay: 0s; }
+        .kiss2 { top: 20%; left: 30%; animation-delay: 1s; }
+        .kiss3 { top: 40%; left: 80%; animation-delay: 2s; }
+        .kiss4 { top: 80%; left: 70%; animation-delay: 3s; }
+
+        /* Letter overlay */
+        .letter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .letter-envelope {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            background: #fffaf0;
+            border: 2px solid #8b4513;
+            padding: 30px;
+            transform: rotate(2deg);
+            cursor: pointer;
+            animation: letterAppear 0.5s ease-out;
+            box-shadow: 20px 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .letter-content {
+            display: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: #fffaf0;
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            overflow-y: auto;
+            border: 1px solid #e8dcc9;
+        }
+
+        .letter-content h2 {
+            color: #8b4513;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+        }
+
+        .letter-content p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #5d4037;
+            font-size: 18px;
+        }
+
+        .letter-flap {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 100px;
+            background: #fffaf0;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            border: 2px solid #8b4513;
+            border-bottom: none;
+        }
+
+        /* Cupid animation */
+        .cupid-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .cupid {
+            position: absolute;
+            top: 50%;
+            left: -100px;
+            font-size: 60px;
+            animation: flyAcross 3s ease-in forwards;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 48%;
+            left: 60px;
+            font-size: 40px;
+            animation: flyWithCupid 3s ease-in forwards;
+            z-index: 2;
+        }
+
+        .target-heart {
+            position: absolute;
+            right: 100px;
+            top: 50%;
+            font-size: 100px;
+            opacity: 0;
+            animation: heartTarget 3s 3s forwards;
+        }
+
+        /* Final animation */
+        .final-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            background: rgba(245, 240, 225, 0.95);
+        }
+
+        .kiss-scene {
+            text-align: center;
+        }
+
+        .kiss-scene .characters {
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+
+        .final-message {
+            font-size: 36px;
+            color: #ff6b8b;
+            font-family: 'Brush Script MT', cursive;
+            animation: fadeInOut 3s infinite;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Music player */
+        .music-player {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 5;
+        }
+
+        .play-btn {
+            background: #ff6b8b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(-2deg); }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateY(-50%) translateX(-100px) rotate(-3deg); opacity: 0; }
+            to { transform: translateY(-50%) translateX(0) rotate(-3deg); opacity: 1; }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: rotate(10deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+        }
+
+        @keyframes stampIn {
+            0% { transform: rotate(15deg) scale(3); opacity: 0; }
+            60% { transform: rotate(15deg) scale(0.9); }
+            100% { transform: rotate(15deg) scale(1); opacity: 0.7; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -55%); }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes letterAppear {
+            from { transform: scale(0) rotate(2deg); }
+            to { transform: scale(1) rotate(2deg); }
+        }
+
+        @keyframes flyAcross {
+            0% { left: -100px; transform: translateY(-50%); }
+            100% { left: calc(100% + 100px); transform: translateY(-50%); }
+        }
+
+        @keyframes flyWithCupid {
+            0% { left: 60px; opacity: 1; }
+            70% { opacity: 1; }
+            100% { left: calc(100% + 40px); opacity: 0; }
+        }
+
+        @keyframes heartTarget {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes popOut {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* Floating vintage elements */
+        .vintage-element {
+            position: absolute;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .ve1 { top: 15%; left: 5%; font-size: 40px; transform: rotate(-15deg); }
+        .ve2 { top: 25%; right: 10%; font-size: 30px; transform: rotate(20deg); }
+        .ve3 { bottom: 30%; left: 20%; font-size: 35px; transform: rotate(10deg); }
+        .ve4 { bottom: 20%; right: 15%; font-size: 25px; transform: rotate(-25deg); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="film-roll"></div>
+        
+        <div class="cat-couple"></div>
+        
+        <div class="message-paper">
+            <p>Oh you're here my love?</p>
+        </div>
+        
+        <div class="fingerprint-heart"></div>
+        <div class="heart-stamp"></div>
+        
+        <div class="hello-kitty" onclick="openLetter()">
+            <div class="kitty-ears">
+                <div class="ear ear-left"></div>
+                <div class="ear ear-right"></div>
+            </div>
+            <div class="kitty-body"></div>
+            <div class="kitty-bow"></div>
+            <div class="kitty-gift">
+                <div class="gift-bow"></div>
+            </div>
+        </div>
+        
+        <div class="kisses kiss1">💋</div>
+        <div class="kisses kiss2">💋</div>
+        <div class="kisses kiss3">💋</div>
+        <div class="kisses kiss4">💋</div>
+        
+        <!-- Vintage decorative elements -->
+        <div class="vintage-element ve1">🌸</div>
+        <div class="vintage-element ve2">✉️</div>
+        <div class="vintage-element ve3">💝</div>
+        <div class="vintage-element ve4">🎀</div>
+        
+        <div class="music-player">
+            <button class="play-btn" onclick="toggleMusic()">🎵 Play Music</button>
+            <audio id="bg-music" loop>
+                <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-sunset-687.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+    </div>
+    
+    <!-- Letter Overlay -->
+    <div class="letter-overlay" id="letterOverlay" onclick="openLetterCard()">
+        <div class="letter-envelope">
+            <div class="letter-flap"></div>
+            <div class="letter-content" id="letterContent">
+                <h2>To My Love ❤️</h2>
+                <p>My Dearest,</p>
+                <p>As 2025 draws to a close, I find myself reflecting on the beautiful moments we've shared. You've been the brightest part of my days, the warmth in my heart, and the joy in my soul.</p>
+                <p>Thank you for every laugh, every embrace, every moment of understanding. You've made this year truly magical, and I'm filled with gratitude for your presence in my life.</p>
+                <p>I eagerly await 2026, not just as another year, but as another chapter in our forever story. I can't wait to create more memories, share more dreams, and continue this beautiful journey with you.</p>
+                <p>Not just this year, but my whole life - I choose you, always.</p>
+                <p>With all my love,</p>
+                <p style="text-align: right; margin-top: 30px;">Your forever love ❤️</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cupid Animation -->
+    <div class="cupid-container" id="cupidContainer">
+        <div class="cupid">🏹</div>
+        <div class="arrow">➹</div>
+        <div class="target-heart">💘</div>
+    </div>
+    
+    <!-- Final Animation -->
+    <div class="final-animation" id="finalAnimation">
+        <div class="kiss-scene">
+            <div class="characters">🐱💋🕷️</div>
+            <div class="final-message" id="finalMessage">I love you so much<br>Always and Forever</div>
+        </div>
+    </div>
+
+    <script>
+        let musicPlaying = false;
+        const audio = document.getElementById('bg-music');
+        
+        function toggleMusic() {
+            if (musicPlaying) {
+                audio.pause();
+                document.querySelector('.play-btn').textContent = '🎵 Play Music';
+            } else {
+                audio.play().catch(e => {
+                    console.log("Autoplay prevented. Click the button again.");
+                });
+                document.querySelector('.play-btn').textContent = '🎵 Music Playing';
+            }
+            musicPlaying = !musicPlaying;
+        }
+        
+        function openLetter() {
+            document.getElementById('letterOverlay').style.display = 'flex';
+        }
+        
+        function openLetterCard() {
+            document.getElementById('letterContent').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('letterOverlay').style.display = 'none';
+                document.getElementById('letterContent').style.display = 'none';
+                startCupidAnimation();
+            }, 5000);
+        }
+        
+        function startCupidAnimation() {
+            document.getElementById('cupidContainer').style.display = 'flex';
+            
+            setTimeout(() => {
+                document.getElementById('cupidContainer').style.display = 'none';
+                showFinalAnimation();
+            }, 4000);
+        }
+        
+        function showFinalAnimation() {
+            document.getElementById('finalAnimation').style.display = 'flex';
+            
+            // Animate the text
+            const message = document.getElementById('finalMessage');
+            let texts = [
+                "I love you so much",
+            
